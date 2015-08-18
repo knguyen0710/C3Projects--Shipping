@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+
+  get '/shipping?weight=:weight&dimensions=:dimensions&units=:units&country=:country&state=:state&city=:city&zip=:zip', to: 'shipping#calc_rates'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
