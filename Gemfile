@@ -1,4 +1,8 @@
 source 'https://rubygems.org'
+<<<<<<< HEAD
+
+=======
+>>>>>>> 36f41c6599c2d5757218500fd83085deae72f143
 gem 'active_shipping'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
