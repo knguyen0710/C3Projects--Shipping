@@ -2,9 +2,9 @@ class UpsApi
   
   def initialize
     @ups = ActiveShipping::UPS.new(
-      :login => ENV['ACTIVESHIPPING_UPS_LOGIN'], 
-      :password => ENV['ACTIVESHIPPING_UPS_PASSWORD'], 
-      :key => ENV['ACTIVESHIPPING_UPS_KEY'])
+      :login => ENV['UPS_LOGIN'], 
+      :password => ENV['UPS_PASSWORD'], 
+      :key => ENV['UPS_KEY'])
   end
 
   def calc_ups_options(origin, destination, package)

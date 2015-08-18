@@ -4,10 +4,17 @@ class ShippingController < ApplicationController
 
   # where the route goes from the API call
   def calc_rates
-    destination = new_destination(params[:country], params[:state], params[:city], params[:zip])
-    package = new_package(params[:weight], params[:dimensions], params[:units])
+    destination = new_destination(params[:state], params[:city], params[:zip])
+    package = new_package(params[:weight], params[:length], params[:width], params[:height])
 
-    calc_shipping_options(@origin, destination, package)
+    shipping_options = calc_shipping_options(@origin, destination, package)
+
+    # turn this into a json object to send back to bEtsy app
+    unless shipping_options.empty?
+      render json: shipping_options.as_json(except: [:created_at, :updated_at])
+    else
+      render json: {}, status: 204
+    end
   end
 
   # def log_completed_shipment
@@ -17,8 +24,8 @@ class ShippingController < ApplicationController
 ##################################################
 private
 
-  def new_destination(country, state, city, zip)
-    ActiveShipping::Location.new( :country => country,
+  def new_destination(state, city, zip)
+    ActiveShipping::Location.new( :country => 'US',
                                   :state => state,
                                   :city => city,
                                   :zip => zip)
@@ -28,8 +35,8 @@ private
                 # United States
   end
 
-  def new_package(weight, dimensions, units)
-    ActiveShipping::Package.new(weight, dimensions, units)
+  def new_package(weight, length, width, height)
+    ActiveShipping::Package.new(weight.to_f, [length.to_i, width.to_i, height.to_i], :units => :imperial)
 
             #  What a new package looks like...
                 # #<ActiveShipping::Package:0x007fb1a61e3278
@@ -54,21 +61,10 @@ private
   end
 
   def calc_shipping_options(origin, destination, package)
-    # call UPS API with params (.rb file) (pass in package, destination and @origin)
     ups_options = UpsApi.new.calc_ups_options(origin, destination, package)
-
-    # call FedEx API with params (.rb file) (pass in package, destination and @origin)
     fedex_options = FedexApi.new.fedex_rates(origin, destination, package)
 
-    # concatenate the two shipping provider arrays into one array of all the shipping options
     shipping_options = ups_options + fedex_options
-
-    # turn this into a json object to send back to bEtsy app
-    unless shipping_options.empty?
-      render json: shipping_options.as_json(except: [:created_at, :updated_at])
-    else
-      render json: {}, status: 204
-    end
   end
 
 end

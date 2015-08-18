@@ -2,7 +2,7 @@ class FedexApi
   attr_reader :fedex
 
   def initialize
-    @fedex = ActiveShipping::FedEx.new(login: 'adalovelace2016',
+    @fedex = ActiveShipping::FedEx.new(login: ENV['FEDEX_LOGIN'],
                                     password: ENV['FEDEX_PASSWORD'],
                                     key: ENV['FEDEX_TEST_KEY'],
                                     account: ENV['FEDEX_ACCOUNT'],
@@ -15,6 +15,6 @@ class FedexApi
   end
 
   def normalize_rate(rate)
-    number_to_currency(rate/100)
+    rate/100.00
   end
 end

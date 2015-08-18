@@ -1,4 +1,6 @@
 source 'https://rubygems.org'
+gem 'dotenv-rails', :groups => [:development, :test]
+
 gem 'active_shipping'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
