@@ -1,3 +1,10 @@
+# Active Shipping gem
+require 'active_shipping'
+
+# modular class files
+require 'ups_api'
+require 'fedex_api'
+
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
