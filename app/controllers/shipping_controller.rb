@@ -58,7 +58,7 @@ private
     ups_options = UpsApi.new.calc_ups_options(origin, destination, package)
 
     # call FedEx API with params (.rb file) (pass in package, destination and @origin)
-    fedex_options = fedex_rates(origin, destination, package)
+    fedex_options = FedexApi.new.fedex_rates(origin, destination, package)
 
     # concatenate the two shipping provider arrays into one array of all the shipping options
     shipping_options = ups_options + fedex_options
