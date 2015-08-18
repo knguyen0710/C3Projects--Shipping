@@ -1,6 +1,5 @@
-
 class ShippingController < ApplicationController
-
+  
   before_action :origin, only: :calc_rates
 
   # where the route goes from the API call
@@ -59,20 +58,17 @@ private
     ups_options = UpsApi.new.calc_ups_options(origin, destination, package)
 
     # call FedEx API with params (.rb file) (pass in package, destination and @origin)
-    fedex_options = 
+    fedex_options = fedex_rates(origin, destination, package)
 
     # concatenate the two shipping provider arrays into one array of all the shipping options
     shipping_options = ups_options + fedex_options
 
     # turn this into a json object to send back to bEtsy app
-
-    # EXAMPLE from class:
-    # unless matches.empty?
-    #   render json: matches.as_json(except: [:created_at, :updated_at])
-    # else
-    #   render json: {}, status: 204
-    # end
-
+    unless shipping_options.empty?
+      render json: shipping_options.as_json(except: [:created_at, :updated_at])
+    else
+      render json: {}, status: 204
+    end
   end
 
 end
