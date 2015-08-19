@@ -4,10 +4,14 @@ class ShippingController < ApplicationController
 
   # where the route goes from the API call
   def calc_rates
-    raise
+    # raise
+
+    # http://localhost:3000/shipping?state=UT&city=park%20city&zip=98109&packages[][length]=2&packages[][width]=2&packages[][length]=3&packages[][width]=3
+    # packages[0][length]=2&packages[0][width]=2
 
     destination = new_destination(params[:state], params[:city], params[:zip])
-    all_packages = new_package(packages)
+
+    all_packages = new_package(params[:packages])
 
     shipping_options = calc_shipping_options(@origin, destination, package)
 
@@ -38,10 +42,11 @@ private
   end
 
   def new_package(packages)
+    raise
 
     all_packages = []
     packages.each do |p|
-      # all_packages << ActiveShipping::Package.new(p[:weight].to_f, [p.[:length].to_i, p[:width].to_i, p[:height].to_i], :units => :imperial)
+      all_packages << ActiveShipping::Package.new(p[:weight].to_f, [p.[:length].to_i, p[:width].to_i, p[:height].to_i], :units => :imperial)
 
             #  What a new package looks like...
                 # #<ActiveShipping::Package:0x007fb1a61e3278
