@@ -1,11 +1,13 @@
 class ShippingController < ApplicationController
-  
+
   before_action :origin, only: :calc_rates
 
   # where the route goes from the API call
   def calc_rates
+    raise
+
     destination = new_destination(params[:state], params[:city], params[:zip])
-    package = new_package(params[:weight], params[:length], params[:width], params[:height])
+    all_packages = new_package(packages)
 
     shipping_options = calc_shipping_options(@origin, destination, package)
 
@@ -35,8 +37,11 @@ private
                 # United States
   end
 
-  def new_package(weight, length, width, height)
-    ActiveShipping::Package.new(weight.to_f, [length.to_i, width.to_i, height.to_i], :units => :imperial)
+  def new_package(packages)
+
+    all_packages = []
+    packages.each do |p|
+      # all_packages << ActiveShipping::Package.new(p[:weight].to_f, [p.[:length].to_i, p[:width].to_i, p[:height].to_i], :units => :imperial)
 
             #  What a new package looks like...
                 # #<ActiveShipping::Package:0x007fb1a61e3278
@@ -51,6 +56,7 @@ private
                 #  @value=nil,
                 #  @weight=#<Quantified::Mass: 7.5 ounces>,
                 #  @weight_unit_system=:imperial>
+    end
   end
 
   def origin
@@ -60,9 +66,9 @@ private
                                   :zip => "98109")
   end
 
-  def calc_shipping_options(origin, destination, package)
-    ups_options = UpsApi.new.calc_ups_options(origin, destination, package)
-    fedex_options = FedexApi.new.fedex_rates(origin, destination, package)
+  def calc_shipping_options(origin, destination, packages)
+    ups_options = UpsApi.new.calc_ups_options(origin, destination, packages)
+    fedex_options = FedexApi.new.fedex_rates(origin, destination, packages)
 
     shipping_options = ups_options + fedex_options
   end

@@ -1,14 +1,14 @@
 class UpsApi
-  
+
   def initialize
     @ups = ActiveShipping::UPS.new(
-      :login => ENV['UPS_LOGIN'], 
-      :password => ENV['UPS_PASSWORD'], 
+      :login => ENV['UPS_LOGIN'],
+      :password => ENV['UPS_PASSWORD'],
       :key => ENV['UPS_KEY'])
   end
 
-  def calc_ups_options(origin, destination, package)
-    response = @ups.find_rates(origin, destination, package)
+  def calc_ups_options(origin, destination, packages)
+    response = @ups.find_rates(origin, destination, packages)
 
     ups_rates = response.rates.sort_by(&:price).collect {|rate| [rate.service_name, rate.price]}
   end
