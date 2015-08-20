@@ -11,11 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150818202451) do
+ActiveRecord::Schema.define(version: 20150820195934) do
 
   create_table "audits", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.integer  "order_id"
+    t.string   "carrier"
+    t.string   "mode"
+    t.float    "shipping_cost"
   end
 
 end
