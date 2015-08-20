@@ -1,17 +1,17 @@
 class ShippingController < ApplicationController
 
-  before_action :origin, only: :calc_rates
-
   # where the route goes from the API call
+
+  # TEST URL:
+  # http://localhost:3001/shipping?o_state=WA&o_city=seattle&o_zip=98109&state=UT&city=park%20city&zip=84098&packages[][length]=2&packages[][width]=2&packages[][height]=2&packages[][weight]=2&packages[][length]=3&packages[][width]=3&packages[][height]=3&packages[][weight]=3
+
   def calc_rates
-    # http://localhost:3000/shipping?state=UT&city=park%20city&zip=98109&packages[][length]=2&packages[][width]=2&packages[][length]=3&packages[][width]=3
-    # packages[0][length]=2&packages[0][width]=2
 
-    destination = new_destination(params[:state], params[:city], params[:zip])
-
+    destination = new_location(params[:state], params[:city], params[:zip])
+    origin = new_location(params[:o_state], params[:o_city], params[:o_zip])
     all_packages = new_package(params[:packages])
 
-    shipping_options = calc_shipping_options(@origin, destination, all_packages)
+    shipping_options = calc_shipping_options(origin, destination, all_packages)
 
     # turn this into a json object to send back to bEtsy app
     unless shipping_options.empty?
@@ -28,7 +28,7 @@ class ShippingController < ApplicationController
 ##################################################
 private
 
-  def new_destination(state, city, zip)
+  def new_location(state, city, zip)
     ActiveShipping::Location.new( :country => 'US',
                                   :state => state,
                                   :city => city,
@@ -62,18 +62,17 @@ private
     return all_packages
   end
 
-  def origin
-    @origin = ActiveShipping::Location.new( :country => "US",
-                                  :state => "WA",
-                                  :city => "Seattle",
-                                  :zip => "98109")
-  end
+  # def origin
+  #   @origin = ActiveShipping::Location.new( :country => "US",
+  #                                 :state => "WA",
+  #                                 :city => "Seattle",
+  #                                 :zip => "98109")
+  # end
 
   def calc_shipping_options(origin, destination, packages)
     ups_options = UpsApi.new.calc_ups_options(origin, destination, packages)
     fedex_options = FedexApi.new.fedex_rates(origin, destination, packages)
 
     shipping_options = ups_options + fedex_options
-  end
-
+  end 
 end
