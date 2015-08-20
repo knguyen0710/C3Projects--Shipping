@@ -7,6 +7,8 @@ class ShippingController < ApplicationController
     # http://localhost:3000/shipping?state=UT&city=park%20city&zip=98109&packages[][length]=2&packages[][width]=2&packages[][length]=3&packages[][width]=3
     # packages[0][length]=2&packages[0][width]=2
 
+    origin = origin(params[:state], params[:city], params[:zip])
+    # make separate API calls to avoid conflicting params for origin and destination??
     destination = new_destination(params[:state], params[:city], params[:zip])
 
     all_packages = new_package(params[:packages])
@@ -62,11 +64,11 @@ private
     return all_packages
   end
 
-  def origin
+  def origin(state, city, zip)
     @origin = ActiveShipping::Location.new( :country => "US",
-                                  :state => "WA",
-                                  :city => "Seattle",
-                                  :zip => "98109")
+                                  :state => state,
+                                  :city => city,
+                                  :zip => zip)
   end
 
   def calc_shipping_options(origin, destination, packages)
