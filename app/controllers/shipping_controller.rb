@@ -1,7 +1,6 @@
 class ShippingController < ApplicationController
 
   # where the route goes from the API call
-
   # TEST URL:
   # http://localhost:3001/shipping?o_state=WA&o_city=seattle&o_zip=98109&state=UT&city=park%20city&zip=84098&packages[][length]=2&packages[][width]=2&packages[][height]=2&packages[][weight]=2&packages[][length]=3&packages[][width]=3&packages[][height]=3&packages[][weight]=3
 
@@ -33,46 +32,21 @@ private
                                   :state => state,
                                   :city => city,
                                   :zip => zip)
-
-            # What it returns for a location...
-                # => Seattle, WA, 98109
-                # United States
   end
 
   def new_package(packages)
     all_packages = []
     packages.each do |p|
       all_packages << ActiveShipping::Package.new(p[:weight].to_f, [p[:length].to_i, p[:width].to_i, p[:height].to_i], :units => :imperial)
-
-            #  What a new package looks like...
-                # #<ActiveShipping::Package:0x007fb1a61e3278
-                #  @currency=nil,
-                #  @cylinder=false,
-                #  @dimensions=[#<Quantified::Length: 4.5 inches>, #<Quantified::Length: 10 inches>, #<Quantified::Length: 15 inches>],
-                #  @dimensions_unit_system=:imperial,
-                #  @gift=false,
-                #  @options={:units=>:imperial},
-                #  @oversized=false,
-                #  @unpackaged=false,
-                #  @value=nil,
-                #  @weight=#<Quantified::Mass: 7.5 ounces>,
-                #  @weight_unit_system=:imperial>
     end
 
     return all_packages
   end
-
-  # def origin
-  #   @origin = ActiveShipping::Location.new( :country => "US",
-  #                                 :state => "WA",
-  #                                 :city => "Seattle",
-  #                                 :zip => "98109")
-  # end
 
   def calc_shipping_options(origin, destination, packages)
     ups_options = UpsApi.new.calc_ups_options(origin, destination, packages)
     fedex_options = FedexApi.new.fedex_rates(origin, destination, packages)
 
     shipping_options = ups_options + fedex_options
-  end 
+  end
 end
