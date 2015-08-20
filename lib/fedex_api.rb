@@ -17,4 +17,9 @@ class FedexApi
   def normalize_rate(rate)
     rate/100.00
   end
+
+  # ActiveShipping gem Carrier.create_shipment(origin, destination, packages, options = {})
+  def get_tracking(origin, destination, packages)
+    response = @fedex.create_shipment(origin, destination, packages)
+  end
 end
