@@ -7,14 +7,14 @@ class ShippingController < ApplicationController
     # http://localhost:3000/shipping?state=UT&city=park%20city&zip=98109&packages[][length]=2&packages[][width]=2&packages[][length]=3&packages[][width]=3
     # packages[0][length]=2&packages[0][width]=2
 
-    origin = origin(params[:state], params[:city], params[:zip])
+    origin = origin(params[:o_state], params[:o_city], params[:o_zip])
     # make separate API calls to avoid conflicting params for origin and destination??
+    raise
     destination = new_destination(params[:state], params[:city], params[:zip])
 
     all_packages = new_package(params[:packages])
 
     shipping_options = calc_shipping_options(@origin, destination, all_packages)
-
     # turn this into a json object to send back to bEtsy app
     unless shipping_options.empty?
       render json: shipping_options.as_json(except: [:created_at, :updated_at])
