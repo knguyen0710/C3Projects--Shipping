@@ -1,20 +1,19 @@
 class ShippingController < ApplicationController
 
-  before_action :origin, only: :calc_rates
-
   # where the route goes from the API call
   def calc_rates
     # http://localhost:3000/shipping?state=UT&city=park%20city&zip=98109&packages[][length]=2&packages[][width]=2&packages[][length]=3&packages[][width]=3
     # packages[0][length]=2&packages[0][width]=2
 
+    # http://localhost:3001/shipping?state=WA&city=seattle&zip=98101&o_state=WA&o_city=seattle&o_zip=98101&packages[][length]=12.0&packages[][width]=10.0&packages[][height]=2.0&packages[][weight]=1.0&packages[][length]=12.0&packages[][width]=10.0&packages[][height]=2.0&packages[][weight]=1.0&packages[][length]=12.0&packages[][width]=10.0&packages[][height]=2.0&packages[][weight]=1.0
+
     origin = origin(params[:o_state], params[:o_city], params[:o_zip])
-    # make separate API calls to avoid conflicting params for origin and destination??
-    raise
+
     destination = new_destination(params[:state], params[:city], params[:zip])
 
     all_packages = new_package(params[:packages])
 
-    shipping_options = calc_shipping_options(@origin, destination, all_packages)
+    shipping_options = calc_shipping_options(origin, destination, all_packages)
     # turn this into a json object to send back to bEtsy app
     unless shipping_options.empty?
       render json: shipping_options.as_json(except: [:created_at, :updated_at])
@@ -65,7 +64,7 @@ private
   end
 
   def origin(state, city, zip)
-    @origin = ActiveShipping::Location.new( :country => "US",
+    ActiveShipping::Location.new( :country => "US",
                                   :state => state,
                                   :city => city,
                                   :zip => zip)
