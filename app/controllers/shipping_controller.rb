@@ -1,12 +1,9 @@
 class ShippingController < ApplicationController
 
-  # before_action :origin, only: :calc_rates
-
   # where the route goes from the API call
-  
+
   # TEST URL:
-  # http://localhost:3000/shipping?state=UT&city=park%20city&zip=98109&packages[][length]=2&packages[][width]=2&packages[][length]=3&packages[][width]=3
-  # packages[0][length]=2&packages[0][width]=2
+  # http://localhost:3001/shipping?o_state=WA&o_city=seattle&o_zip=98109&state=UT&city=park%20city&zip=84098&packages[][length]=2&packages[][width]=2&packages[][height]=2&packages[][weight]=2&packages[][length]=3&packages[][width]=3&packages[][height]=3&packages[][weight]=3
 
   def calc_rates
 
@@ -22,24 +19,6 @@ class ShippingController < ApplicationController
     else
       render json: {}, status: 204
     end
-  end
-
-  # TEST URL:
-  # http://localhost:3001/delivery_info?carrier=ups&state=WA&city=Seattle&zip=98101&o_state=UT&o_city=park%20city&o_zip=84098&packages[][length]=12.0&packages[][width]=10.0&packages[][height]=2.0&packages[][weight]=
-
-  def delivery_info
-    # receiving one merchant's set of products to ship
-
-    carrier = params[:carrier]
-    destination = new_location(params[:state], params[:city], params[:zip])
-    origin = new_location(params[:o_state], params[:o_city], params[:o_zip])
-    all_packages = new_package(params[:packages])
-
-    get_tracking_number(carrier, origin, destination, all_packages)
-
-    # Get EDD
-      # pass in num of business days from now
-      # runs timestamp_from_business_day method (returns est delivery date)
   end
 
   # def log_completed_shipment
@@ -83,32 +62,17 @@ private
     return all_packages
   end
 
-  def origin
-    @origin = ActiveShipping::Location.new( :country => "US",
-                                  :state => "WA",
-                                  :city => "Seattle",
-                                  :zip => "98109")
-  end
+  # def origin
+  #   @origin = ActiveShipping::Location.new( :country => "US",
+  #                                 :state => "WA",
+  #                                 :city => "Seattle",
+  #                                 :zip => "98109")
+  # end
 
   def calc_shipping_options(origin, destination, packages)
     ups_options = UpsApi.new.calc_ups_options(origin, destination, packages)
     fedex_options = FedexApi.new.fedex_rates(origin, destination, packages)
 
     shipping_options = ups_options + fedex_options
-  end
-
-  def get_tracking_number(carrier, origin, destination, packages)
-    if carrier == "ups"
-      tracking_number = UpsApi.new.get_tracking(origin, destination, packages)
-    elsif carrier == "fedex"
-      tracking_number = FedexApi.new.get_tracking(origin, destination, packages)
-    end
-
-    return tracking_number
-  end
-
-  # Calculates a timestamp that corresponds a given number of business days in the future
-  def est_delivery_date(days)
-    ActiveShipping::Carrier.new.timestamp_from_business_day(days)
   end 
 end

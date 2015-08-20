@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
 
   get '/shipping', to: 'shipping#calc_rates'
-  get '/delivery_info', to: 'shipping#delivery_info'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
