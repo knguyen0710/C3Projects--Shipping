@@ -10,20 +10,11 @@ class UpsApi
   def calc_ups_options(origin, destination, packages)
     response = @ups.find_rates(origin, destination, packages)
 
-    ups_rates = response.rates.sort_by(&:price).collect {|rate| [rate.service_name, normalize_rate(rate.price)]}
+    ups_rates = response.rates.sort_by(&:price).collect {|rate| [rate.service_name, normalize_rate(rate.price), rate.delivery_date]}
   end
 
   def normalize_rate(rate)
     rate/100.00
   end
+
 end
-
-
-# EXAMPLE:
-
-# ups_rates = response.rates.sort_by(&:price).collect {|rate| [rate.service_name, rate.price]}
-# # => [["UPS Standard", 3936],
-# #     ["UPS Worldwide Expedited", 8682],
-# #     ["UPS Saver", 9348],
-# #     ["UPS Express", 9702],
-# #     ["UPS Worldwide Express Plus", 14502]]
