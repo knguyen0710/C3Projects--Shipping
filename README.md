@@ -1,4 +1,8 @@
 # Kari + Kyna --- Shipping!
+
+Heroku Site: http://meta-shipping-api.herokuapp.com/
+
+
 Build a stand-alone shipping service API that calculates estimated shipping cost for an order from another team's bEtsy application.
 
 ## Learning Goals
