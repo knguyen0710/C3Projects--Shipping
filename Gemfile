@@ -32,6 +32,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+group :test do
+  gem 'webmock'
+end
 
 group :development, :test do
   # Use sqlite3 as the database for Active Record
@@ -53,6 +56,8 @@ group :development, :test do
   gem 'factory_girl_rails', '~> 4.0'
 
   gem 'simplecov', require: false
+
+  gem 'vcr'
 end
 
 group :production do
