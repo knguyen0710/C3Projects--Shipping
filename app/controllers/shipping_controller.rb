@@ -6,17 +6,23 @@ class ShippingController < ApplicationController
 
   def calc_rates
 
-    destination = new_location(params[:state], params[:city], params[:zip])
-    origin = new_location(params[:o_state], params[:o_city], params[:o_zip])
-    all_packages = new_package(params[:packages])
+    begin 
+      destination = new_location(params[:state], params[:city], params[:zip])
+      origin = new_location(params[:o_state], params[:o_city], params[:o_zip])
+      all_packages = new_package(params[:packages])
 
-    shipping_options = calc_shipping_options(origin, destination, all_packages)
+      shipping_options = calc_shipping_options(origin, destination, all_packages)
 
-    # turn this into a json object to send back to bEtsy app
-    unless shipping_options.empty?
-      render json: shipping_options.as_json(except: [:created_at, :updated_at])
-    else
-      render json: {}, status: 204
+      # turn this into a json object to send back to bEtsy app
+    
+      unless shipping_options.empty?
+        render json: shipping_options.as_json(except: [:created_at, :updated_at])
+      else
+        render json: {}, status: 204
+      end
+    rescue ActiveShipping::ResponseError => error
+      error_json = { message: error.message }
+      render json: error_json.as_json, response_code: 410
     end
   end
 
