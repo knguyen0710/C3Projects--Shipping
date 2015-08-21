@@ -12,11 +12,10 @@ class ShippingController < ApplicationController
       all_packages = new_package(params[:packages])
 
       shipping_options = calc_shipping_options(origin, destination, all_packages)
-
       # turn this into a json object to send back to bEtsy app
     
       unless shipping_options.empty?
-        render json: shipping_options.as_json(except: [:created_at, :updated_at])
+        render json: shipping_options.as_json(except: [:created_at, :updated_at]), status: :ok
       else
         render json: {}, status: 204
       end

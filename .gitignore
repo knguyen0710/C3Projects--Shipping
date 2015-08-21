@@ -19,3 +19,6 @@
 /coverage
 
 .env
+
+# Ignore vcr cassettes
+/support/vcr_cassettes
